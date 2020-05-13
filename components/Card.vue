@@ -46,6 +46,7 @@
       </li>
     </ul>
     <div class="add"
+         v-if="showAddBtn"
          @click="handleAdd">
       <svg viewBox="0 0 1024 1024"
            width="20"
@@ -57,62 +58,67 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, computed } from "vue";
-import { Todo, getTodoList, setTodoList } from "../todo-helper.ts";
+import { ref, reactive, computed, watch } from 'vue'
+import { Todo, getTodoList, setTodoList } from '../model/todo.ts'
 const weekArr: string[] = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Firday",
-  "Saturday"
-];
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Firday',
+  'Saturday'
+]
 export default {
-  name: "Card",
+  name: 'Card',
   directives: {
     focus(el) {
-      el.focus();
+      el.focus()
     }
   },
   props: {
-    date: String
+    date: String,
+    showAddBtn: Boolean
   },
   setup(props) {
-    let todoList: Todo[] = reactive(getTodoList(props.date));
-    const editingValue = ref("");
-    const weekDay = computed(() => weekArr[new Date(props.date).getDay()]);
+    let todoList = reactive(getTodoList(props.date))
+    const editingValue = ref('')
+    const weekDay = computed(() => weekArr[new Date(props.date).getDay()])
     const formatterDate = computed((): string => {
-      const arr: string[] = new Date(props.date).toDateString().split(" ");
-      return `${arr[1]} ${arr[2]}, ${arr[3]}`;
-    });
+      const arr: string[] = new Date(props.date).toDateString().split(' ')
+      return `${arr[1]} ${arr[2]}, ${arr[3]}`
+    })
     const handleChecked = (item: Todo): void => {
-      item.isChecked = !item.isChecked;
-      setTodoList(props.date, todoList);
-    };
+      item.isChecked = !item.isChecked
+    }
     const handleRemove = (index: number) => {
-      todoList.splice(index, 1);
-      setTodoList(props.date, todoList);
-    };
+      todoList.splice(index, 1)
+    }
     const handleAdd = (): void => {
-      editingValue.value = "";
+      editingValue.value = ''
       todoList.push({
-        content: "",
+        content: '',
         isChecked: false,
         isEditing: true
-      });
-    };
+      })
+    }
     const handleEditSubmit = (item: Todo, index: number): void => {
       if (item.isEditing) {
         if (editingValue.value) {
-          item.content = editingValue.value;
-          item.isEditing = false;
+          item.content = editingValue.value
+          item.isEditing = false
         } else {
-          todoList.splice(index, 1);
+          todoList.splice(index, 1)
         }
-        setTodoList(props.date, todoList);
       }
-    };
+    }
+    watch(
+      () => todoList,
+      val => {
+        setTodoList(props.date, val)
+      },
+      { deep: true }
+    )
     return {
       weekDay,
       formatterDate,
@@ -122,17 +128,18 @@ export default {
       handleRemove,
       handleAdd,
       handleEditSubmit
-    };
+    }
   }
-};
+}
 </script>
 <style scoped lang="scss">
 // @import url("https://fonts.googleapis.com/css?family=Fredericka+the+Great|Zilla+Slab:300,400");
-@import "../assets/fonts.css";
+@import '../assets/fonts.css';
 $white: #fff;
 $main-color: #643a7a;
 .todo-list-card {
   width: 350px;
+  min-width: 350px;
   height: 550px;
   border-radius: 4px;
   box-shadow: 0 0 10px #ccc;
@@ -141,12 +148,13 @@ $main-color: #643a7a;
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
+  background: #fff;
   .head {
     padding: 20px 0;
     margin: 0 30px;
     border-bottom: 1px solid rgba($main-color, 0.5);
     .title {
-      font-family: "fredericka the great", cursive;
+      font-family: 'fredericka the great', cursive;
       font-weight: 500;
       text-align: center;
       font-size: 2.5rem;
@@ -155,7 +163,7 @@ $main-color: #643a7a;
       line-height: 3.2rem;
     }
     .subtitle {
-      font-family: "zilla slab", serif;
+      font-family: 'zilla slab', serif;
       height: 1.2rem;
       line-height: 1.2rem;
       font-size: 0.9rem;
@@ -239,7 +247,7 @@ $main-color: #643a7a;
         stroke-width: 8;
         opacity: 0;
       }
-      input[type="checkbox"] {
+      input[type='checkbox'] {
         display: none;
       }
       .wrapper {
