@@ -128,6 +128,7 @@ export default {
 </script>
 <style scoped lang="scss">
 // @import url("https://fonts.googleapis.com/css?family=Fredericka+the+Great|Zilla+Slab:300,400");
+@import "../assets/fonts.css";
 $white: #fff;
 $main-color: #643a7a;
 .todo-list-card {
@@ -140,22 +141,23 @@ $main-color: #643a7a;
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
-  // font-family: "zilla slab", serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   .head {
     padding: 20px 0;
     margin: 0 30px;
     border-bottom: 1px solid rgba($main-color, 0.5);
     .title {
-      // font-family: "fredericka the great", cursive;
+      font-family: "fredericka the great", cursive;
       font-weight: 500;
       text-align: center;
       font-size: 2.5rem;
       color: rgba(rgba($main-color, 0.5), 0.8);
-      margin-bottom: 0.3rem;
+      height: 3.2rem;
+      line-height: 3.2rem;
     }
     .subtitle {
+      font-family: "zilla slab", serif;
+      height: 1.2rem;
+      line-height: 1.2rem;
       font-size: 0.9rem;
       text-align: center;
       letter-spacing: 0.5px;
