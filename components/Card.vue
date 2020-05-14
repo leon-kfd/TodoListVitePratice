@@ -3,6 +3,9 @@
     <div class="head">
       <div class="title">{{weekDay}}</div>
       <div class="subtitle">{{formatterDate}}</div>
+      <div class="picker">
+        <DatePicker :date="date" />
+      </div>
     </div>
     <ul class="list">
       <li class="list-item"
@@ -58,22 +61,33 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
-import { Todo, getTodoList, setTodoList } from '../model/todo.ts'
+import {
+  ref,
+  reactive,
+  computed,
+  watch,
+  watchEffect,
+  getCurrentInstance
+} from "vue";
+import { Todo, getTodoList, setTodoList } from "../model/todo.ts";
+import DatePicker from "./DatePicker.vue";
 const weekArr: string[] = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Firday',
-  'Saturday'
-]
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Firday",
+  "Saturday"
+];
 export default {
-  name: 'Card',
+  name: "Card",
+  components: {
+    DatePicker
+  },
   directives: {
     focus(el) {
-      el.focus()
+      el.focus();
     }
   },
   props: {
@@ -81,44 +95,56 @@ export default {
     showAddBtn: Boolean
   },
   setup(props) {
-    let todoList = reactive(getTodoList(props.date))
-    const editingValue = ref('')
-    const weekDay = computed(() => weekArr[new Date(props.date).getDay()])
+    const instance: any = getCurrentInstance();
+    const ctx = instance.ctx;
+
+    let todoList = reactive([]);
+    watch(
+      () => props.date,
+      val => {
+        todoList.length = 0;
+        todoList.push(...getTodoList(props.date));
+      },
+      {
+        immediate: true
+      }
+    );
+    const editingValue = ref("");
+    const weekDay = computed(() => weekArr[new Date(props.date).getDay()]);
     const formatterDate = computed((): string => {
-      const arr: string[] = new Date(props.date).toDateString().split(' ')
-      return `${arr[1]} ${arr[2]}, ${arr[3]}`
-    })
+      const arr: string[] = new Date(props.date).toDateString().split(" ");
+      return `${arr[1]} ${arr[2]}, ${arr[3]}`;
+    });
     const handleChecked = (item: Todo): void => {
-      item.isChecked = !item.isChecked
-    }
-    const handleRemove = (index: number) => {
-      todoList.splice(index, 1)
-    }
+      item.isChecked = !item.isChecked;
+      setTodoList(props.date, todoList);
+      ctx.$store.commit("refreshTodoListDateArr");
+    };
+    const handleRemove = (index: number): void => {
+      todoList.splice(index, 1);
+      setTodoList(props.date, todoList);
+      ctx.$store.commit("refreshTodoListDateArr");
+    };
     const handleAdd = (): void => {
-      editingValue.value = ''
+      editingValue.value = "";
       todoList.push({
-        content: '',
+        content: "",
         isChecked: false,
         isEditing: true
-      })
-    }
+      });
+    };
     const handleEditSubmit = (item: Todo, index: number): void => {
       if (item.isEditing) {
         if (editingValue.value) {
-          item.content = editingValue.value
-          item.isEditing = false
+          item.content = editingValue.value;
+          item.isEditing = false;
         } else {
-          todoList.splice(index, 1)
+          todoList.splice(index, 1);
         }
+        setTodoList(props.date, todoList);
+        ctx.$store.commit("refreshTodoListDateArr");
       }
-    }
-    watch(
-      () => todoList,
-      val => {
-        setTodoList(props.date, val)
-      },
-      { deep: true }
-    )
+    };
     return {
       weekDay,
       formatterDate,
@@ -128,13 +154,13 @@ export default {
       handleRemove,
       handleAdd,
       handleEditSubmit
-    }
+    };
   }
-}
+};
 </script>
 <style scoped lang="scss">
 // @import url("https://fonts.googleapis.com/css?family=Fredericka+the+Great|Zilla+Slab:300,400");
-@import '../assets/fonts.css';
+@import "../assets/fonts.css";
 $white: #fff;
 $main-color: #643a7a;
 .todo-list-card {
@@ -157,7 +183,7 @@ $main-color: #643a7a;
     margin: 0 30px;
     border-bottom: 1px solid rgba($main-color, 0.5);
     .title {
-      font-family: 'fredericka the great', cursive;
+      font-family: "fredericka the great", cursive;
       font-weight: 500;
       text-align: center;
       font-size: 2.5rem;
@@ -166,12 +192,17 @@ $main-color: #643a7a;
       line-height: 3.2rem;
     }
     .subtitle {
-      font-family: 'zilla slab', serif;
+      font-family: "zilla slab", serif;
       height: 1.2rem;
       line-height: 1.2rem;
       font-size: 0.9rem;
       text-align: center;
       letter-spacing: 0.5px;
+    }
+    .picker {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba($main-color, 0.5);
     }
   }
   .list {
@@ -250,7 +281,7 @@ $main-color: #643a7a;
         stroke-width: 8;
         opacity: 0;
       }
-      input[type='checkbox'] {
+      input[type="checkbox"] {
         display: none;
       }
       .wrapper {

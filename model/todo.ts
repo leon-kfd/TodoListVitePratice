@@ -6,16 +6,20 @@ export interface Todo {
 
 export const getTodoList = (date: string): Todo[] => {
   try {
-    return JSON.parse(localStorage.getItem(date)) || []
+    const todoListMap = JSON.parse(localStorage.getItem('_todoList')) || {}
+    return todoListMap[date] || []
   } catch {
     return []
   }
 }
 
 export const setTodoList = (date: string, todoList: Todo[]): void => {
+  let todoListMap = JSON.parse(localStorage.getItem('_todoList')) || {}
   if (todoList.length > 0) {
-    localStorage.setItem(date, JSON.stringify(todoList))
+    todoListMap[date] = todoList
+    localStorage.setItem('_todoList', JSON.stringify(todoListMap))
   } else {
-    localStorage.removeItem(date)
+    delete todoListMap[date]
+    localStorage.setItem('_todoList', JSON.stringify(todoListMap))
   }
 }
