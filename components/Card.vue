@@ -1,9 +1,12 @@
 <template>
   <div class="todo-list-card">
     <div class="head">
-      <div class="title">{{weekDay}}</div>
-      <div class="subtitle">{{formatterDate}}</div>
-      <div class="picker">
+      <div class="title"
+           @click="showDatePicker = !showDatePicker">{{weekDay}}</div>
+      <div class="subtitle"
+           @click="showDatePicker = !showDatePicker">{{formatterDate}}</div>
+      <div class="picker"
+           :class="{active: showDatePicker}">
         <DatePicker :date="date" />
       </div>
     </div>
@@ -68,26 +71,26 @@ import {
   watch,
   watchEffect,
   getCurrentInstance
-} from "vue";
-import { Todo, getTodoList, setTodoList } from "../model/todo.ts";
-import DatePicker from "./DatePicker.vue";
+} from 'vue'
+import { Todo, getTodoList, setTodoList } from '../model/todo.ts'
+import DatePicker from './DatePicker.vue'
 const weekArr: string[] = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Firday",
-  "Saturday"
-];
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Firday',
+  'Saturday'
+]
 export default {
-  name: "Card",
+  name: 'Card',
   components: {
     DatePicker
   },
   directives: {
     focus(el) {
-      el.focus();
+      el.focus()
     }
   },
   props: {
@@ -95,114 +98,131 @@ export default {
     showAddBtn: Boolean
   },
   setup(props) {
-    const instance: any = getCurrentInstance();
-    const ctx = instance.ctx;
+    const instance: any = getCurrentInstance()
+    const ctx = instance.ctx
 
-    let todoList = reactive([]);
+    const state = {
+      editingValue: ref(''),
+      showDatePicker: ref(false)
+    }
+
+    let todoList = reactive([])
     watch(
       () => props.date,
       val => {
-        todoList.length = 0;
-        todoList.push(...getTodoList(props.date));
+        todoList.length = 0
+        todoList.push(...getTodoList(props.date))
+        // state.showDatePicker.value = false
       },
       {
         immediate: true
       }
-    );
-    const editingValue = ref("");
-    const weekDay = computed(() => weekArr[new Date(props.date).getDay()]);
+    )
+
+    const weekDay = computed(() => weekArr[new Date(props.date).getDay()])
     const formatterDate = computed((): string => {
-      const arr: string[] = new Date(props.date).toDateString().split(" ");
-      return `${arr[1]} ${arr[2]}, ${arr[3]}`;
-    });
+      const arr: string[] = new Date(props.date).toDateString().split(' ')
+      return `${arr[1]} ${arr[2]}, ${arr[3]}`
+    })
     const handleChecked = (item: Todo): void => {
-      item.isChecked = !item.isChecked;
-      setTodoList(props.date, todoList);
-      ctx.$store.commit("refreshTodoListDateArr");
-    };
+      item.isChecked = !item.isChecked
+      setTodoList(props.date, todoList)
+      ctx.$store.commit('refreshTodoListDateArr')
+    }
     const handleRemove = (index: number): void => {
-      todoList.splice(index, 1);
-      setTodoList(props.date, todoList);
-      ctx.$store.commit("refreshTodoListDateArr");
-    };
+      todoList.splice(index, 1)
+      setTodoList(props.date, todoList)
+      ctx.$store.commit('refreshTodoListDateArr')
+    }
     const handleAdd = (): void => {
-      editingValue.value = "";
+      state.editingValue.value = ''
       todoList.push({
-        content: "",
+        content: '',
         isChecked: false,
         isEditing: true
-      });
-    };
+      })
+    }
     const handleEditSubmit = (item: Todo, index: number): void => {
       if (item.isEditing) {
-        if (editingValue.value) {
-          item.content = editingValue.value;
-          item.isEditing = false;
+        if (state.editingValue.value) {
+          item.content = state.editingValue.value
+          item.isEditing = false
         } else {
-          todoList.splice(index, 1);
+          todoList.splice(index, 1)
         }
-        setTodoList(props.date, todoList);
-        ctx.$store.commit("refreshTodoListDateArr");
+        setTodoList(props.date, todoList)
+        ctx.$store.commit('refreshTodoListDateArr')
       }
-    };
+    }
     return {
       weekDay,
       formatterDate,
       todoList,
-      editingValue,
       handleChecked,
       handleRemove,
       handleAdd,
-      handleEditSubmit
-    };
+      handleEditSubmit,
+      ...state
+    }
   }
-};
+}
 </script>
 <style scoped lang="scss">
 // @import url("https://fonts.googleapis.com/css?family=Fredericka+the+Great|Zilla+Slab:300,400");
-@import "../assets/fonts.css";
+@import '../assets/fonts.css';
 $white: #fff;
 $main-color: #643a7a;
 .todo-list-card {
-  width: 350px;
-  min-width: 350px;
-  height: 550px;
+  width: 100%;
+  max-width: 350px;
+  height: 600px;
   border-radius: 4px;
-  box-shadow: 0 0 10px #ccc;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.6);
   margin: 20px auto;
   position: relative;
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
   background: #fff;
-  &:hover {
-    box-shadow: 0 0 30px #ccc;
-  }
   .head {
-    padding: 20px 0;
+    padding: 20px 0 0;
     margin: 0 30px;
-    border-bottom: 1px solid rgba($main-color, 0.5);
+    // border-bottom: 1px solid rgba($main-color, 0.5);
+    user-select: none;
     .title {
-      font-family: "fredericka the great", cursive;
+      font-family: 'fredericka the great', cursive;
       font-weight: 500;
       text-align: center;
       font-size: 2.5rem;
       color: rgba(rgba($main-color, 0.5), 0.8);
       height: 3.2rem;
       line-height: 3.2rem;
+      cursor: pointer;
     }
     .subtitle {
-      font-family: "zilla slab", serif;
+      font-family: 'zilla slab', serif;
       height: 1.2rem;
       line-height: 1.2rem;
       font-size: 0.9rem;
       text-align: center;
       letter-spacing: 0.5px;
+      cursor: pointer;
     }
     .picker {
       margin-top: 20px;
-      padding-top: 20px;
+      padding-top: 15px;
       border-top: 1px solid rgba($main-color, 0.5);
+      height: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.4s ease-in-out;
+      &.active {
+        max-height: 270px;
+        height: 100%;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba($main-color, 0.5);
+        transition: all 0.4s ease-in-out;
+      }
     }
   }
   .list {
@@ -281,7 +301,7 @@ $main-color: #643a7a;
         stroke-width: 8;
         opacity: 0;
       }
-      input[type="checkbox"] {
+      input[type='checkbox'] {
         display: none;
       }
       .wrapper {
@@ -349,6 +369,26 @@ $main-color: #643a7a;
   100% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+@media screen and (max-width: 350px) {
+  .todo-list-card {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.6);
+    margin: 0;
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    background: #fff;
+    .add {
+      transform: translate(-50%, -10px);
+    }
+    .list {
+      padding: 4px 0 30px 60px;
+    }
   }
 }
 </style>

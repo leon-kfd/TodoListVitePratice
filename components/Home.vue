@@ -29,7 +29,6 @@ export default {
   flex-wrap: nowrap;
   align-items: center;
   justify-content: space-around;
-  max-width: 1080px;
   margin: 0 auto;
 }
 </style>
