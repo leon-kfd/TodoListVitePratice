@@ -1,4 +1,7 @@
-export const DateFormat = (date: Date, formatter: string = 'yyyy-MM-dd'): string => {
+export const DateFormat = (date: Date | string | number, formatter: string = 'yyyy-MM-dd'): string => {
+  if (typeof date !== 'object') {
+    date = new Date(date)
+  }
   const opt = {
     "y+": date.getFullYear().toString(),        // 年
     "M+": (date.getMonth() + 1).toString(),     // 月
@@ -14,4 +17,15 @@ export const DateFormat = (date: Date, formatter: string = 'yyyy-MM-dd'): string
     };
   };
   return formatter;
+}
+
+export const DateCompute = (date: Date | string | number, type: string = 'add', time: number) => {
+  if (typeof date !== 'object') {
+    date = new Date(date)
+  }
+  if (type === 'add') {
+    return date.setTime(date.getTime() + time)
+  } else {
+    return date.setTime(date.getTime() - time)
+  }
 }

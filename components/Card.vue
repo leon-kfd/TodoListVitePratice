@@ -149,6 +149,9 @@ $main-color: #643a7a;
   flex-wrap: nowrap;
   flex-direction: column;
   background: #fff;
+  &:hover {
+    box-shadow: 0 0 30px #ccc;
+  }
   .head {
     padding: 20px 0;
     margin: 0 30px;

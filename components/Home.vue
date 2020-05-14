@@ -3,13 +3,16 @@
     <Card v-for="(item,index) in dateArr"
           :key="item"
           :date="item"
+          :showAddBtn="index === ~~(DAY_NUM / 2)"
           :class="`date${index+1}`" />
   </div>
+  <button @click="handlePrev">Prev</button>
+  <button @click="handleNext">Next</button>
 </template>
 
 <script lang="ts">
 import { ref, reactive, computed, watch } from 'vue'
-import { DateFormat } from '../utils/helper.ts'
+import { DateFormat, DateCompute } from '../utils/helper.ts'
 import Card from './Card.vue'
 export default {
   name: 'Main',
@@ -17,19 +20,27 @@ export default {
     Card
   },
   setup() {
+    const DAY_NUM = 5
+    const oneDay = 24 * 60 * 60 * 1000
     let nowDate = ref(DateFormat(new Date()))
     let dateArr = computed(() => {
-      const DAY_NUM = 5
-      const i = ~~(DAY_NUM / 2) + 1
-      const oneDay = 24 * 60 * 60 * 1000
-      let date = new Date(nowDate.value)
-      date.setTime(date.getTime() - oneDay * i)
-      return Array.from({ length: DAY_NUM }, () =>
-        DateFormat(new Date(date.setTime(date.getTime() + oneDay)))
+      const i = ~~(DAY_NUM / 2)
+      let date = DateCompute(nowDate.value, 'substract', oneDay * i)
+      return Array.from({ length: DAY_NUM }, (item, index) =>
+        DateFormat(DateCompute(date, 'add', oneDay * index))
       )
     })
+    const handlePrev = () =>
+      (nowDate.value = DateFormat(
+        DateCompute(nowDate.value, 'substract', oneDay)
+      ))
+    const handleNext = () =>
+      (nowDate.value = DateFormat(DateCompute(nowDate.value, 'add', oneDay)))
     return {
-      dateArr
+      dateArr,
+      handlePrev,
+      handleNext,
+      DAY_NUM
     }
   }
 }
