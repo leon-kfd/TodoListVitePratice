@@ -173,8 +173,7 @@ export default {
 $white: #fff;
 $main-color: #643a7a;
 .todo-list-card {
-  width: 100%;
-  max-width: 350px;
+  width: 350px;
   height: 600px;
   border-radius: 4px;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.6);
@@ -215,21 +214,24 @@ $main-color: #643a7a;
       height: 0;
       max-height: 0;
       overflow: hidden;
-      transition: all 0.4s ease-in-out;
+      transition: all 0.4s cubic-bezier(0.38, -0.21, 1, 2.33);
       &.active {
         max-height: 270px;
         height: 100%;
         padding-bottom: 15px;
         border-bottom: 1px solid rgba($main-color, 0.5);
-        transition: all 0.4s ease-in-out;
+        transition: all 0.4s cubic-bezier(0.38, -0.21, 1, 2.33);
       }
     }
   }
   .list {
     list-style: none;
-    padding: 4px 0 30px 40px;
+    padding: 4px 0 10px 40px;
+    margin-bottom: 30px;
     font-weight: 300;
     overflow-y: auto;
+    height: 100%;
+    flex: 1;
     .list-item {
       position: relative;
       display: flex;
@@ -371,7 +373,7 @@ $main-color: #643a7a;
     transform: scale(1);
   }
 }
-@media screen and (max-width: 350px) {
+@media screen and (max-width: 400px) {
   .todo-list-card {
     width: 100vw;
     height: 100vh;
@@ -387,7 +389,13 @@ $main-color: #643a7a;
       transform: translate(-50%, -10px);
     }
     .list {
-      padding: 4px 0 30px 60px;
+      margin-bottom: 60px;
+      .list-item {
+        .close {
+          display: block;
+          animation: closeFadeIn 0.4s forwards;
+        }
+      }
     }
   }
 }

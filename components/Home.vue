@@ -5,23 +5,23 @@
   </div>
 </template>
 
-<script>
-import { ref, computed, getCurrentInstance } from "vue";
-// import { DateFormat } from "../utils/helper.ts";
-import Card from "./Card.vue";
+<script lang="ts">
+import { ref, computed, getCurrentInstance } from 'vue'
+import Card from './Card.vue'
 export default {
-  name: "Main",
+  name: 'Main',
   components: {
     Card
   },
-  setup (props, context) {
-    const { ctx } = getCurrentInstance()
+  setup(props) {
+    const instance: any = getCurrentInstance()
+    const ctx = instance.ctx
     const selectedDate = computed(() => ctx.$store.state.selectedDate)
     return {
       selectedDate
-    };
+    }
   }
-};
+}
 </script>
 <style scoped lang="scss">
 .wrapper {
