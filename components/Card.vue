@@ -24,9 +24,9 @@
                class="edit"
                v-focus
                v-else
-               v-model="editingValue"
-               @blur="handleEditSubmit(item,index)"
-               @keyup.enter="handleEditSubmit(item,index)" />
+               :value="editingValue"
+               @blur="handleEditSubmit($event, item,index)"
+               @keyup.enter="handleEditSubmit($event,item,index)" />
         <div class="button"
              @click="handleChecked(item)"></div>
         <div class="close"
@@ -64,9 +64,9 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, computed, watch, watchEffect } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import { Todo, getTodoList, setTodoList } from '../model/todo.ts'
+import { Todo, getTodoList, setTodoList } from '../model/todo'
 import DatePicker from './DatePicker.vue'
 const weekArr: string[] = [
   'Sunday',
@@ -84,7 +84,9 @@ export default {
   },
   directives: {
     focus(el) {
-      el.focus()
+      if (document.activeElement !== el) {
+        el.focus()
+      }
     }
   },
   props: {
@@ -135,10 +137,10 @@ export default {
         isEditing: true
       })
     }
-    const handleEditSubmit = (item: Todo, index: number): void => {
+    const handleEditSubmit = ($event: any, item: Todo, index: number): void => {
       if (item.isEditing) {
-        if (state.editingValue.value) {
-          item.content = state.editingValue.value
+        if ($event.currentTarget.value) {
+          item.content = state.editingValue.value = $event.currentTarget.value
           item.isEditing = false
         } else {
           todoList.splice(index, 1)
