@@ -163,7 +163,7 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-@import url('https://fonts.googleapis.com/css?family=Fredericka+the+Great|Zilla+Slab:300,400');
+// @import url('https://fonts.googleapis.com/css?family=Fredericka+the+Great|Zilla+Slab:300,400');
 $white: #fff;
 $main-color: #643a7a;
 .todo-list-card {
