@@ -1,5 +1,5 @@
 import Vuex from 'vuex'
-import moment from "moment/dist/moment.js";
+import moment from "../utils/moment.js";
 
 export default Vuex.createStore({
   state: {

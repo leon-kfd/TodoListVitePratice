@@ -64,14 +64,8 @@
 </template>
 
 <script lang="ts">
-import {
-  ref,
-  reactive,
-  computed,
-  watch,
-  watchEffect,
-  getCurrentInstance
-} from 'vue'
+import { ref, reactive, computed, watch, watchEffect } from 'vue'
+import { useStore } from 'vuex'
 import { Todo, getTodoList, setTodoList } from '../model/todo.ts'
 import DatePicker from './DatePicker.vue'
 const weekArr: string[] = [
@@ -98,8 +92,7 @@ export default {
     showAddBtn: Boolean
   },
   setup(props) {
-    const instance: any = getCurrentInstance()
-    const ctx = instance.ctx
+    const store = useStore()
 
     const state = {
       editingValue: ref(''),
@@ -127,12 +120,12 @@ export default {
     const handleChecked = (item: Todo): void => {
       item.isChecked = !item.isChecked
       setTodoList(props.date, todoList)
-      ctx.$store.commit('refreshTodoListDateArr')
+      store.commit('refreshTodoListDateArr')
     }
     const handleRemove = (index: number): void => {
       todoList.splice(index, 1)
       setTodoList(props.date, todoList)
-      ctx.$store.commit('refreshTodoListDateArr')
+      store.commit('refreshTodoListDateArr')
     }
     const handleAdd = (): void => {
       state.editingValue.value = ''
@@ -151,7 +144,7 @@ export default {
           todoList.splice(index, 1)
         }
         setTodoList(props.date, todoList)
-        ctx.$store.commit('refreshTodoListDateArr')
+        store.commit('refreshTodoListDateArr')
       }
     }
     return {
@@ -168,8 +161,7 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-// @import url("https://fonts.googleapis.com/css?family=Fredericka+the+Great|Zilla+Slab:300,400");
-@import '../assets/fonts.css';
+@import url('https://fonts.googleapis.com/css?family=Fredericka+the+Great|Zilla+Slab:300,400');
 $white: #fff;
 $main-color: #643a7a;
 .todo-list-card {

@@ -6,17 +6,22 @@
 </template>
 
 <script lang="ts">
-import { ref, computed, getCurrentInstance } from 'vue'
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import Card from './Card.vue'
 export default {
   name: 'Main',
   components: {
     Card
   },
-  setup(props) {
+  setup() {
+    /* 
+    // Don't use getCurrentInstance()!
     const instance: any = getCurrentInstance()
     const ctx = instance.ctx
-    const selectedDate = computed(() => ctx.$store.state.selectedDate)
+    */
+    const store = useStore()
+    const selectedDate = computed(() => store.state.selectedDate)
     return {
       selectedDate
     }

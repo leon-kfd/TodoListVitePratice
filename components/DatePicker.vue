@@ -37,16 +37,16 @@
 </template>
 
 <script lang="ts">
-import { ref, computed, getCurrentInstance, onMounted, watch } from 'vue'
-import moment from 'moment/dist/moment.js'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useStore } from 'vuex'
+import moment from '../utils/moment.js'
 export default {
   name: 'DatePicker',
   props: {
     date: String
   },
   setup(props) {
-    const instance: any = getCurrentInstance()
-    const ctx = instance.ctx
+    const store = useStore()
 
     let yearAndMonth = ref('')
     watch(
@@ -84,15 +84,15 @@ export default {
       moment(yearAndMonth.value).format('MMM, YYYY')
     )
 
-    const hasTodoListDates = computed(() => ctx.$store.state.todoListDateArr)
+    const hasTodoListDates = computed(() => store.state.todoListDateArr)
 
     onMounted(() => {
-      ctx.$store.commit('refreshTodoListDateArr')
+      store.commit('refreshTodoListDateArr')
     })
 
     const handleClickDay = item => {
       const { value, month } = item
-      ctx.$store.commit('changeSelectedDate', value)
+      store.commit('changeSelectedDate', value)
     }
     const handlePrevClick = () => {
       yearAndMonth.value = moment(yearAndMonth.value)
